@@ -1,0 +1,10 @@
+# GSD runtime files
+.gsd/gsd.db
+.gsd/gsd.db-shm
+.gsd/gsd.db-wal
+.gsd/gsd.db.backup-*
+.gsd/notifications.jsonl
+.gsd/runtime/
+
+# Shell session files
+.bg-shell/
