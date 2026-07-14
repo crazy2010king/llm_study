@@ -1,0 +1,44 @@
+name: Unzip PDFs
+
+on:
+  push:
+    paths:
+      - 'pdf_zips/*.zip'
+      - 'pdf_zips/*.z01'
+  workflow_dispatch:
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Unzip dl_books.zip
+        run: |
+          mkdir -p IntroductionToDeepLearning/doc/其他类别 \
+                   IntroductionToDeepLearning/doc/深度学习入门
+          unzip -o pdf_zips/dl_books.zip -d .
+
+      - name: Unzip EasyRL (split archive)
+        run: |
+          # Merge split zip, then extract
+          zip -s 0 pdf_zips/EasyRL_v1.zip --out /tmp/EasyRL_full.zip
+          unzip -o /tmp/EasyRL_full.zip -d .
+          rm /tmp/EasyRL_full.zip
+
+      - name: Track PDFs with LFS and commit
+        run: |
+          git lfs track "*.pdf"
+          git add .gitattributes
+          # Only commit if there are actual PDF changes
+          git add IntroductionToDeepLearning/
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git commit -m "Auto-unzip PDFs from archives [skip ci]"
+            git push
+          fi
