@@ -2,9 +2,7 @@ name: Unzip PDFs
 
 on:
   push:
-    paths:
-      - 'pdf_zips/*.zip'
-      - 'pdf_zips/*.z01'
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
