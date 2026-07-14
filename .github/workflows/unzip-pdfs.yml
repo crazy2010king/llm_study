@@ -10,10 +10,13 @@ on:
 jobs:
   unzip:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
         with:
           lfs: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Unzip dl_books.zip
         run: |
@@ -23,7 +26,6 @@ jobs:
 
       - name: Unzip EasyRL (split archive)
         run: |
-          # Merge split zip, then extract
           zip -s 0 pdf_zips/EasyRL_v1.zip --out /tmp/EasyRL_full.zip
           unzip -o /tmp/EasyRL_full.zip -d .
           rm /tmp/EasyRL_full.zip
@@ -31,14 +33,12 @@ jobs:
       - name: Track PDFs with LFS and commit
         run: |
           git lfs track "*.pdf"
-          git add .gitattributes
-          # Only commit if there are actual PDF changes
-          git add IntroductionToDeepLearning/
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .gitattributes IntroductionToDeepLearning/
           if git diff --cached --quiet; then
             echo "No changes to commit"
           else
-            git config user.name "github-actions[bot]"
-            git config user.email "github-actions[bot]@users.noreply.github.com"
             git commit -m "Auto-unzip PDFs from archives [skip ci]"
             git push
           fi
