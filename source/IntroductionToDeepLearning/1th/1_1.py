@@ -1,0 +1,20 @@
+import numpy as np
+x = np.array([1.0, 2.0, 3.0])
+y = np.array([2.0, 4.0, 6.0])
+
+print(x)
+print(y)
+z = x - y
+print(z)
+z = x + y
+print(z)
+z = x * y
+print(z)
+z = x / y
+print(z)
+m = np.array([1.0, 2.0])
+#z = m -y 
+#print(z)
+
+z = x / 5
+print(z)
